@@ -40,65 +40,118 @@ button{
 
 <script>
 
-let coins = 1000;
-let xp = 0;
-let level = 1;
+/* PASTE THE NEW SCRIPT HERE */
 
-const cards = [
-"Common Card",
-"Rare Card",
-"Ultra Rare Card",
-"Secret Rare Card",
-"Mega Lucario ex",
-"Mega Gardevoir ex",
-"Mega Venusaur ex",
-"Mega Latias ex"
-];
+let coins = localStorage.getItem("coins") || 1000;
+let xp = localStorage.getItem("xp") || 0;
+let level = localStorage.getItem("level") || 1;
+
+let collection =
+JSON.parse(localStorage.getItem("collection")) || [];
+
+const packs = {
+  "Mega Evolution": {
+    price: 100,
+    cards: [
+      "Mega Lucario ex",
+      "Mega Gardevoir ex",
+      "Mega Venusaur ex",
+      "Mega Latias ex"
+    ]
+  },
+
+  "Scarlet & Violet": {
+    price: 150,
+    cards: [
+      "Charizard ex",
+      "Miraidon ex",
+      "Koraidon ex",
+      "Pikachu"
+    ]
+  }
+};
+
+function saveGame(){
+  localStorage.setItem("coins", coins);
+  localStorage.setItem("xp", xp);
+  localStorage.setItem("level", level);
+  localStorage.setItem("collection", JSON.stringify(collection));
+}
 
 function updateStats(){
-document.getElementById("coins").innerHTML =
-"Coins: " + coins;
-
-document.getElementById("xp").innerHTML =
-"XP: " + xp;
-
-document.getElementById("level").innerHTML =
-"Level: " + level;
+  document.getElementById("coins").innerHTML = "Coins: " + coins;
+  document.getElementById("xp").innerHTML = "XP: " + xp;
+  document.getElementById("level").innerHTML = "Level: " + level;
 }
 
-function openPack(){
+function showCollection(){
+  let area = document.getElementById("collection");
+  area.innerHTML = "";
 
-if(coins < 100){
-alert("Not enough coins!");
-return;
+  collection.forEach(card => {
+    let div = document.createElement("div");
+    div.className = "card";
+    div.innerHTML = card;
+    area.appendChild(div);
+  });
 }
 
-coins -= 100;
+function gainXP(amount){
+  xp = Number(xp) + amount;
 
-let card =
-cards[Math.floor(Math.random()*cards.length)];
+  if(xp >= level * 100){
+    xp = 0;
+    level = Number(level) + 1;
+    alert("Level Up! Level " + level);
+  }
+}
 
-let div = document.createElement("div");
+function openPack(packName){
+  let pack = packs[packName];
 
-div.className = "card";
+  if(coins < pack.price){
+    alert("Not enough coins!");
+    return;
+  }
 
-div.innerHTML = card;
+  coins -= pack.price;
 
-document.getElementById("collection")
-.appendChild(div);
+  let card =
+  pack.cards[
+    Math.floor(Math.random() * pack.cards.length)
+  ];
 
-xp += 25;
+  collection.push(card);
 
-if(xp >= level * 100){
-xp = 0;
-level++;
-alert("Level Up! Level " + level);
+  gainXP(25);
+
+  saveGame();
+  updateStats();
+  showCollection();
+
+  alert("You pulled: " + card);
+}
+
+function battleAI(){
+
+  let win = Math.random() > 0.5;
+
+  if(win){
+    coins = Number(coins) + 100;
+    gainXP(50);
+    alert("You beat the AI!");
+  } else {
+    coins = Number(coins) + 25;
+    gainXP(15);
+    alert("You lost!");
+  }
+
+  saveGame();
+  updateStats();
 }
 
 updateStats();
-}
-
-updateStats();
+showCollection();
 
 </script>
 
