@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Pokemon TCG Online</title>
+<style>
+body{
+    font-family:Arial;
+    text-align:center;
+    background:#f0f0f0;
+}
+
+button{
+    padding:10px;
+    margin:5px;
+    font-size:18px;
+}
+
+.card{
+    background:white;
+    padding:15px;
+    margin:10px auto;
+    width:300px;
+    border-radius:10px;
+}
+</style>
+</head>
+<body>
+
+<h1>Pokemon TCG Online</h1>
+
+<h2 id="coins">Coins: 1000</h2>
+<h2 id="level">Level: 1</h2>
+<h2 id="xp">XP: 0</h2>
+
+<button onclick="openPack()">Open Mega Evolution Pack (100 Coins)</button>
+
+<h2>Collection</h2>
+
+<div id="collection"></div>
+
+<script>
+
+let coins = 1000;
+let xp = 0;
+let level = 1;
+
+const cards = [
+"Common Card",
+"Rare Card",
+"Ultra Rare Card",
+"Secret Rare Card",
+"Mega Lucario ex",
+"Mega Gardevoir ex",
+"Mega Venusaur ex",
+"Mega Latias ex"
+];
+
+function updateStats(){
+document.getElementById("coins").innerHTML =
+"Coins: " + coins;
+
+document.getElementById("xp").innerHTML =
+"XP: " + xp;
+
+document.getElementById("level").innerHTML =
+"Level: " + level;
+}
+
+function openPack(){
+
+if(coins < 100){
+alert("Not enough coins!");
+return;
+}
+
+coins -= 100;
+
+let card =
+cards[Math.floor(Math.random()*cards.length)];
+
+let div = document.createElement("div");
+
+div.className = "card";
+
+div.innerHTML = card;
+
+document.getElementById("collection")
+.appendChild(div);
+
+xp += 25;
+
+if(xp >= level * 100){
+xp = 0;
+level++;
+alert("Level Up! Level " + level);
+}
+
+updateStats();
+}
+
+updateStats();
+
+</script>
+
+</body>
+</html>
